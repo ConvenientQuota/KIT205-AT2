@@ -13,3 +13,32 @@ Graph* createGraph(int vertices) {
 
     return graph;
 }
+
+void addEdge(Graph* graph, int src, int dest) {
+    Node* newNode = malloc(sizeof(Node));
+    newNode->vertex = dest;
+    newNode->next = graph->adjLists[src];
+    graph->adjLists[src] = newNode;
+
+    // Since the graph is undirected, add an edge from dest to src as well
+    newNode = malloc(sizeof(Node));
+    newNode->vertex = src;
+    newNode->next = graph->adjLists[dest];
+    graph->adjLists[dest] = newNode;
+}
+
+int* calculateDegreeCentrality(Graph* graph) {
+    int* degree = malloc(graph->numVertices * sizeof(int));
+
+    for (int i = 0; i < graph->numVertices; i++) {
+        Node* temp = graph->adjLists[i];
+        degree[i] = 0;
+
+        while (temp) {
+            degree[i]++;
+            temp = temp->next;
+        }
+    }
+
+    return degree;
+}
