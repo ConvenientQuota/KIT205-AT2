@@ -13,5 +13,7 @@ typedef struct Graph {
 } Graph;
 
 Graph* createGraph(int vertices);
+void addEdge(Graph* graph, int src, int dest);
+int* calculateDegreeCentrality(Graph* graph);
 
 #endif
