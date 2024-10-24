@@ -2,6 +2,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Helper function to free the graph and all its nodes
+void freeGraph(Graph* graph) {
+    for (int i = 0; i < graph->numVertices; i++) {
+        Node* current = graph->adjLists[i];
+        while (current != NULL) {
+            Node* temp = current;
+            current = current->next;
+            free(temp);  // Free each node in the adjacency list
+        }
+    }
+    free(graph->adjLists);  // Free the adjacency lists array
+    free(graph);  // Finally, free the graph structure itself
+}
+
 void test_createGraph() {
     printf("Testing createGraph()...\n");
     Graph* graph = createGraph(5);
@@ -11,7 +25,7 @@ void test_createGraph() {
     else {
         printf("createGraph() failed.\n");
     }
-    free(graph);
+    freeGraph(graph);  // Properly free the graph
 }
 
 void test_addEdge() {
@@ -24,7 +38,7 @@ void test_addEdge() {
     else {
         printf("addEdge() failed.\n");
     }
-    free(graph);
+    freeGraph(graph);  // Properly free the graph
 }
 
 void test_calculateDegreeCentrality() {
@@ -42,7 +56,7 @@ void test_calculateDegreeCentrality() {
         printf("calculateDegreeCentrality() failed.\n");
     }
     free(degreeCentrality);
-    free(graph);
+    freeGraph(graph);  // Properly free the graph
 }
 
 void test_calculateBetweennessCentrality() {
@@ -62,7 +76,7 @@ void test_calculateBetweennessCentrality() {
     }
 
     free(betweennessCentrality);
-    free(graph);
+    freeGraph(graph);  // Properly free the graph
 }
 
 void test_selectCriticalNodes() {
@@ -79,10 +93,8 @@ void test_selectCriticalNodes() {
     printf("Critical nodes selected to minimize misinformation spread: %d, %d\n", criticalNodes[0], criticalNodes[1]);
 
     free(criticalNodes);
-    free(graph);
+    freeGraph(graph);  // Properly free the graph
 }
-
-
 
 int main() {
 
@@ -94,7 +106,7 @@ int main() {
     test_calculateDegreeCentrality();
     test_calculateBetweennessCentrality();
     test_selectCriticalNodes();
-    
+
     // Create a sample graph
     Graph* graph = createGraph(5);
     addEdge(graph, 0, 1);
@@ -124,8 +136,6 @@ int main() {
 
     // Free allocated memory
     free(criticalNodes);
-    free(graph->adjLists);  // Free adjacency lists array
-    free(graph);  // Free the graph structure
+    freeGraph(graph);  // Properly free the graph
     return 0;
-
 }

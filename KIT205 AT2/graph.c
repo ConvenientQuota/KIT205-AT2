@@ -158,10 +158,32 @@ double* calculateBetweennessCentrality(Graph* graph) {
         // Backpropagate dependencies
         while (q->front > 0) {  // Ensure the queue has elements before accessing it
             int w = q->items[--q->front];  // Backtracking in reverse BFS order
+
+            // Validate that 'w' is within valid bounds
+            if (w < 0 || w >= graph->numVertices) {
+                printf("Invalid index w: %d\n", w);
+                continue;  // Skip this iteration if the index is invalid
+            }
+
+            // Iterate over the predecessors
             for (int i = 0; i < sigma[w]; i++) {
                 int v = pred[w][i];
-                delta[v] += (sigma[v] / (double)sigma[w]) * (1 + delta[w]);
+
+                // Validate that 'v' is within valid bounds
+                if (v < 0 || v >= graph->numVertices) {
+                    printf("Invalid index v: %d\n", v);
+                    continue;  // Skip this iteration if the index is invalid
+                }
+
+                // Ensure there is no division by zero
+                if (sigma[w] > 0) {
+                    delta[v] += (sigma[v] / (double)sigma[w]) * (1 + delta[w]);
+                }
+                else {
+                    printf("Warning: Division by zero avoided at w = %d\n", w);
+                }
             }
+
             if (w != s) {
                 betweenness[w] += delta[w];
             }
