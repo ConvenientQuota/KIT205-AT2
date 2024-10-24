@@ -129,6 +129,11 @@ double* calculateBetweennessCentrality(Graph* graph) {
                 free(q->items); free(q);
                 return NULL;
             }
+
+            // Initialize pred[i] to -1 to mark no predecessors
+            for (int j = 0; j < graph->numVertices; j++) {
+                pred[i][j] = -1;  // Initialize to invalid values (-1)
+            }
         }
 
         sigma[s] = 1;  // Only one shortest path to itself
@@ -165,9 +170,20 @@ double* calculateBetweennessCentrality(Graph* graph) {
                 continue;  // Skip this iteration if the index is invalid
             }
 
+            // Check if sigma[w] is zero, which would indicate no shortest paths
+            if (sigma[w] == 0) {
+                printf("No shortest paths found for w = %d\n", w);
+                continue;  // Skip this iteration if there are no shortest paths
+            }
+
             // Iterate over the predecessors
             for (int i = 0; i < sigma[w]; i++) {
                 int v = pred[w][i];
+
+                // Skip invalid predecessor values (-1)
+                if (v == -1) {
+                    continue;  // Skip uninitialized or invalid predecessors
+                }
 
                 // Validate that 'v' is within valid bounds
                 if (v < 0 || v >= graph->numVertices) {
@@ -175,7 +191,7 @@ double* calculateBetweennessCentrality(Graph* graph) {
                     continue;  // Skip this iteration if the index is invalid
                 }
 
-                // Ensure there is no division by zero
+                // Ensure sigma[w] is valid before performing the division
                 if (sigma[w] > 0) {
                     delta[v] += (sigma[v] / (double)sigma[w]) * (1 + delta[w]);
                 }

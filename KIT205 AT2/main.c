@@ -96,6 +96,110 @@ void test_selectCriticalNodes() {
     freeGraph(graph);  // Properly free the graph
 }
 
+/* Testing different graph structures */
+
+// Testing a simple connected graph
+void test_simpleConnectedGraph() {
+    printf("Testing simple connected graph...\n");
+    Graph* graph = createGraph(5);
+    addEdge(graph, 0, 1);
+    addEdge(graph, 1, 2);
+    addEdge(graph, 2, 3);
+    addEdge(graph, 3, 4);
+
+    printGraph(graph);
+
+    int* degreeCentrality = calculateDegreeCentrality(graph);
+    printf("Degree centrality for simple connected graph:\n");
+    for (int i = 0; i < graph->numVertices; i++) {
+        printf("Node %d: %d\n", i, degreeCentrality[i]);
+    }
+    free(degreeCentrality);
+    freeGraph(graph);
+}
+
+// Testing a disconnected graph
+void test_disconnectedGraph() {
+    printf("Testing disconnected graph...\n");
+    Graph* graph = createGraph(6);
+    addEdge(graph, 0, 1);
+    addEdge(graph, 2, 3);
+    addEdge(graph, 4, 5);
+
+    printGraph(graph);
+
+    int* degreeCentrality = calculateDegreeCentrality(graph);
+    printf("Degree centrality for disconnected graph:\n");
+    for (int i = 0; i < graph->numVertices; i++) {
+        printf("Node %d: %d\n", i, degreeCentrality[i]);
+    }
+    free(degreeCentrality);
+    freeGraph(graph);
+}
+
+// Testing a cyclic graph
+void test_cyclicGraph() {
+    printf("Testing cyclic graph...\n");
+    Graph* graph = createGraph(4);
+    addEdge(graph, 0, 1);
+    addEdge(graph, 1, 2);
+    addEdge(graph, 2, 3);
+    addEdge(graph, 3, 0);  // Creating a cycle
+
+    printGraph(graph);
+
+    int* degreeCentrality = calculateDegreeCentrality(graph);
+    printf("Degree centrality for cyclic graph:\n");
+    for (int i = 0; i < graph->numVertices; i++) {
+        printf("Node %d: %d\n", i, degreeCentrality[i]);
+    }
+    free(degreeCentrality);
+    freeGraph(graph);
+}
+
+// Testing a fully connected graph (complete graph)
+void test_fullyConnectedGraph() {
+    printf("Testing fully connected graph...\n");
+    int vertices = 4;
+    Graph* graph = createGraph(vertices);
+    for (int i = 0; i < vertices; i++) {
+        for (int j = i + 1; j < vertices; j++) {
+            addEdge(graph, i, j);
+        }
+    }
+
+    printGraph(graph);
+
+    int* degreeCentrality = calculateDegreeCentrality(graph);
+    printf("Degree centrality for fully connected graph:\n");
+    for (int i = 0; i < graph->numVertices; i++) {
+        printf("Node %d: %d\n", i, degreeCentrality[i]);
+    }
+    free(degreeCentrality);
+    freeGraph(graph);
+}
+
+// Testing a sparse graph
+void test_sparseGraph() {
+    printf("Testing sparse graph...\n");
+    Graph* graph = createGraph(7);
+    addEdge(graph, 0, 1);
+    addEdge(graph, 2, 3);
+    addEdge(graph, 4, 5);
+
+    printGraph(graph);
+
+    int* degreeCentrality = calculateDegreeCentrality(graph);
+    printf("Degree centrality for sparse graph:\n");
+    for (int i = 0; i < graph->numVertices; i++) {
+        printf("Node %d: %d\n", i, degreeCentrality[i]);
+    }
+    free(degreeCentrality);
+    freeGraph(graph);
+}
+
+
+
 int main() {
 
     // Seed the random number generator for stochastic ICM
@@ -106,6 +210,14 @@ int main() {
     test_calculateDegreeCentrality();
     test_calculateBetweennessCentrality();
     test_selectCriticalNodes();
+
+    // testing the various graph structures
+    test_simpleConnectedGraph();
+    test_disconnectedGraph();
+    test_cyclicGraph();
+    test_fullyConnectedGraph();
+    test_sparseGraph();
+
 
     // Create a sample graph
     Graph* graph = createGraph(5);
