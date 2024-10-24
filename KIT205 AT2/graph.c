@@ -79,11 +79,23 @@ int* calculateDegreeCentrality(Graph* graph) {
 
 // Calculate betweenness centrality using Brandes' algorithm
 double* calculateBetweennessCentrality(Graph* graph) {
+    if (graph == NULL || graph->adjLists == NULL) {
+        printf("Graph is NULL or uninitialized.\n");
+        return NULL;
+    }
+
     double* betweenness = malloc(graph->numVertices * sizeof(double));
+    if (betweenness == NULL) {
+        printf("Memory allocation failed for betweenness.\n");
+        return NULL;
+    }
+
+    // Initialize betweenness values to 0
     for (int i = 0; i < graph->numVertices; i++) {
         betweenness[i] = 0.0;
     }
 
+    // Loop over each node as the source
     for (int s = 0; s < graph->numVertices; s++) {
         // Initialize data structures
         int* sigma = malloc(graph->numVertices * sizeof(int));    // Shortest paths count
@@ -92,11 +104,31 @@ double* calculateBetweennessCentrality(Graph* graph) {
         int** pred = malloc(graph->numVertices * sizeof(int*));   // Predecessor list
         Queue* q = createQueue(graph->numVertices);
 
+        // Memory allocation checks
+        if (sigma == NULL || dist == NULL || delta == NULL || pred == NULL || q == NULL) {
+            printf("Memory allocation failed in calculateBetweennessCentrality.\n");
+            free(sigma); free(dist); free(delta);
+            if (pred != NULL) { free(pred); }
+            if (q != NULL) { free(q->items); free(q); }
+            return NULL;
+        }
+
         for (int i = 0; i < graph->numVertices; i++) {
             sigma[i] = 0;
             dist[i] = -1;
             delta[i] = 0.0;
-            pred[i] = malloc(graph->numVertices * sizeof(int));  // Allocating pred list
+            pred[i] = malloc(graph->numVertices * sizeof(int));
+            if (pred[i] == NULL) {  // Check memory allocation for pred[i]
+                printf("Memory allocation failed for pred[%d].\n", i);
+                // Free allocated memory before returning
+                free(sigma); free(dist); free(delta);
+                for (int j = 0; j < i; j++) {
+                    free(pred[j]);
+                }
+                free(pred);
+                free(q->items); free(q);
+                return NULL;
+            }
         }
 
         sigma[s] = 1;  // Only one shortest path to itself
@@ -124,8 +156,8 @@ double* calculateBetweennessCentrality(Graph* graph) {
         }
 
         // Backpropagate dependencies
-        while (q->front > 0) {
-            int w = q->items[--q->front];
+        while (q->front > 0) {  // Ensure the queue has elements before accessing it
+            int w = q->items[--q->front];  // Backtracking in reverse BFS order
             for (int i = 0; i < sigma[w]; i++) {
                 int v = pred[w][i];
                 delta[v] += (sigma[v] / (double)sigma[w]) * (1 + delta[w]);
@@ -152,7 +184,7 @@ double* calculateBetweennessCentrality(Graph* graph) {
         betweenness[i] /= 2.0;
     }
 
-    return betweenness;
+    return betweenness;  // Return the betweenness array
 }
 
 // Greedy selection of critical nodes based on combined centrality measures
@@ -222,4 +254,17 @@ int propagateMisinformation(Graph* graph, int* influenced, int numInfluenced, do
 
     free(status);
     return totalInfluenced;
+}
+
+
+void printGraph(Graph* graph) {
+    for (int i = 0; i < graph->numVertices; i++) {
+        Node* temp = graph->adjLists[i];
+        printf("Vertex %d: ", i);
+        while (temp) {
+            printf("-> %d ", temp->vertex);
+            temp = temp->next;
+        }
+        printf("\n");
+    }
 }
