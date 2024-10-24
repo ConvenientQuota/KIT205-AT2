@@ -94,7 +94,7 @@ int main() {
     test_calculateDegreeCentrality();
     test_calculateBetweennessCentrality();
     test_selectCriticalNodes();
-
+    
     // Create a sample graph
     Graph* graph = createGraph(5);
     addEdge(graph, 0, 1);
