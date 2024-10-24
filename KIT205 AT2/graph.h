@@ -13,5 +13,10 @@ typedef struct Graph {
 } Graph;
 
 Graph* createGraph(int vertices);
+void addEdge(Graph* graph, int src, int dest);
+int* calculateDegreeCentrality(Graph* graph);
+double* calculateBetweennessCentrality(Graph* graph);
+int* selectCriticalNodes(Graph* graph, int k);
+int propagateMisinformation(Graph* graph, int* influenced, int numInfluenced, double probability);
 
 #endif
