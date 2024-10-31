@@ -361,3 +361,43 @@ Graph* generateWattsStrogatzGraph(int n, int k, double beta) {
 
     return graph;
 }
+
+/* Function to remove an edge within the adjacency list */
+
+void removeEdge(Graph* graph, int src, int dest) {
+    Node* current = graph->adjLists[src];
+    Node* prev = NULL;
+
+    while (current != NULL) {
+        if (current->vertex == dest) {
+            if (prev == NULL) {
+                graph->adjLists[src] = current->next;
+            }
+            else {
+                prev->next = current->next;
+            }
+            free(current);
+            break;
+        }
+        prev = current;
+        current = current->next;
+    }
+
+    //remove the edge from dest to src as well
+    current = graph->adjLists[dest];
+    prev = NULL;
+    while (current != NULL) {
+        if (current->vertex == src) {
+            if (prev == NULL) {
+                graph->adjLists[dest] = current->next;
+            }
+            else {
+                prev->next = current->next;
+            }
+            free(current);
+            break;
+        }
+        prev = current;
+        current = current->next;
+    }
+}

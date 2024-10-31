@@ -198,6 +198,19 @@ void test_sparseGraph() {
     freeGraph(graph);
 }
 
+// Test Watts-Strogatz generation with different parameters
+void testWattsStrogatzGraph(int n, int k, double beta) {
+    printf("\nTesting Watts-Strogatz Graph Generation with n=%d, k=%d, beta=%.2f...\n", n, k, beta);
+
+    Graph* graph = generateWattsStrogatzGraph(n, k, beta);
+    if (graph) {
+        printGraph(graph);
+        freeGraph(graph);
+    }
+    else {
+        printf("Failed to generate Watts-Strogatz graph.\n");
+    }
+}
 
 
 int main() {
@@ -231,6 +244,13 @@ int main() {
     // Print the graph (for verification)
     printf("Graph structure:\n");
     printGraph(graph);
+
+    // Basic tests for Watts-Strogatz graph generation with different parameters
+    testWattsStrogatzGraph(10, 2, 0.0);   // Ring lattice without rewiring
+    testWattsStrogatzGraph(10, 4, 0.2);   // Small-world with low rewiring probability
+    testWattsStrogatzGraph(10, 4, 0.8);   // Small-world with high rewiring probability
+    testWattsStrogatzGraph(10, 8, 1.0);   // Almost random graph due to full rewiring
+    testWattsStrogatzGraph(15, 6, 0.5);   // Larger graph with medium rewiring
 
     // Test Independent Cascade Model (ICM) without targeting any nodes
     int initialInfluenced[] = { 0 };  // Start misinformation spread from node 0
