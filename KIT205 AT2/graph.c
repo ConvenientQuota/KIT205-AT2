@@ -308,3 +308,56 @@ void printGraph(Graph* graph) {
         printf("\n");
     }
 }
+
+Graph* generateWattsStrogatzGraph(int n, int k, double beta) {
+    if (k >= n || k % 2 != 0) {
+        printf("k should be an even number and less than the number of nodes (n).\n");
+        return NULL;
+    }
+
+    // Create an empty graph with n vertices
+    Graph* graph = createGraph(n);
+    if (!graph) {
+        printf("Memory allocation failed for the graph.\n");
+        return NULL;
+    }
+
+    // Create a ring lattice where each node is connected to its k nearest neighbors
+    for (int i = 0; i < n; i++) {
+        for (int j = 1; j <= k / 2; j++) {
+            int neighbor = (i + j) % n;
+            addEdge(graph, i, neighbor);  // i to neighbor
+            neighbor = (i - j + n) % n;
+            addEdge(graph, i, neighbor);  // i to the opposite side neighbor
+        }
+    }
+
+    // Rewire each edge with probability beta
+    srand((unsigned int)time(NULL));  //random number generation
+
+    for (int i = 0; i < n; i++) {
+        Node* current = graph->adjLists[i];
+        int neighborCount = 0;
+
+        while (current && neighborCount < k / 2) {
+            int oldNeighbor = current->vertex;
+
+            // Rewire with probability beta
+            if ((double)rand() / RAND_MAX < beta) {
+                int newNeighbor;
+                do {
+                    newNeighbor = rand() % n;  // Picking aa random node
+                } while (newNeighbor == i || newNeighbor == oldNeighbor ||
+                    graph->adjLists[i] && graph->adjLists[i]->vertex == newNeighbor);
+
+                // Remove the old edge and add a new one
+                removeEdge(graph, i, oldNeighbor);
+                addEdge(graph, i, newNeighbor);
+            }
+            current = current->next;
+            neighborCount++;
+        }
+    }
+
+    return graph;
+}
