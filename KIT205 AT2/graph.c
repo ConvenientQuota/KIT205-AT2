@@ -47,8 +47,20 @@ void freeQueue(Queue* q) {
 
 Graph* createGraph(int vertices) {
     Graph* graph = malloc(sizeof(Graph));
+    if (!graph) {
+        printf("Memory allocation failed for graph.\n");
+        return NULL;
+    }
+    printf("Graph allocated at %p\n", (void*)graph);
+
     graph->numVertices = vertices;
     graph->adjLists = malloc(vertices * sizeof(Node*));
+    if (!graph->adjLists) {
+        printf("Memory allocation failed for adjLists.\n");
+        free(graph);
+        return NULL;
+    }
+    printf("Graph's adjLists allocated at %p\n", (void*)graph->adjLists);
 
     for (int i = 0; i < vertices; i++) {
         graph->adjLists[i] = NULL;
@@ -305,9 +317,12 @@ int propagateMisinformation(Graph* graph, int* influenced, int numInfluenced, do
 
 
 void printGraph(Graph* graph) {
-
     if (graph == NULL) {
         printf("Error: Graph is NULL.\n");
+        return;
+    }
+    if (graph->adjLists == NULL) {
+        printf("Error: Graph's adjacency list array is NULL.\n");
         return;
     }
 
@@ -332,6 +347,16 @@ Graph* generateWattsStrogatzGraph(int n, int k, double beta) {
     Graph* graph = createGraph(n);
     if (!graph) {
         printf("Memory allocation failed for the graph.\n");
+        return NULL;
+    }
+
+    printf("Graph created successfully. Address: %p\n", (void*)graph);
+    printf("Graph->adjLists Address: %p\n", (void*)graph->adjLists);
+
+    // Check if adjLists is correctly allocated
+    if (graph->adjLists == NULL) {
+        printf("Graph's adjLists is NULL after allocation in createGraph.\n");
+        free(graph);
         return NULL;
     }
 
