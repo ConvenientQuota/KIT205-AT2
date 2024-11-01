@@ -37,6 +37,13 @@ int isEmpty(Queue* q) {
     return q->size == 0;
 }
 
+void freeQueue(Queue* q) {
+    if (q) {
+        free(q->items);
+        free(q);
+    }
+}
+
 
 Graph* createGraph(int vertices) {
     Graph* graph = malloc(sizeof(Graph));
@@ -298,6 +305,12 @@ int propagateMisinformation(Graph* graph, int* influenced, int numInfluenced, do
 
 
 void printGraph(Graph* graph) {
+
+    if (graph == NULL) {
+        printf("Error: Graph is NULL.\n");
+        return;
+    }
+
     for (int i = 0; i < graph->numVertices; i++) {
         Node* temp = graph->adjLists[i];
         printf("Vertex %d: ", i);
